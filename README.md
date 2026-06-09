@@ -2,7 +2,7 @@
 
 A data science project that segments U.S. households from the **Survey of Consumer Finances (SCF) 2019** dataset using K-Means clustering, PCA, and an interactive Dash web application.
 
-**🚀 [Live Demo on Hugging Face Spaces](https://huggingface.co/spaces/Desire-in-tech/Customer-Segmentation)** *(update URL after deployment)*
+**🚀 [Live Demo on Render](https://customer-segmentation-lq9d.onrender.com)** *(update URL after deployment)*
 
 ## Overview
 
@@ -13,6 +13,33 @@ This project analyzes households that have been **turned down for credit or fear
 - Ranks features by variance to determine which financial metrics matter most
 - Uses PCA for interpretable 2D visualization of high-dimensional clusters
 - Compares trimmed vs. raw variance for robust feature selection
+
+---
+
+## 📊 Dashboard Preview
+
+### High-Variance Features Analysis
+The app identifies and visualizes the top 5 features with the highest variance, with a toggle between trimmed (robust) and raw variance calculations:
+
+![High-Variance Features Bar Chart](assets/01_bar_chart.png)
+
+*Features ranked by variance help identify which financial metrics have the most variation across households.*
+
+### Clustering Metrics
+Real-time metrics update as you adjust the number of clusters (K). The silhouette score measures cluster quality, while inertia shows within-cluster compactness:
+
+![Clustering Metrics](assets/02_metrics.png)
+
+*Inertia and Silhouette Score guide optimal cluster selection.*
+
+### Cluster Visualization (PCA)
+Interactive 2D scatter plot showing household clusters reduced from 5 dimensions using Principal Component Analysis. Each point represents a household, colored by cluster assignment:
+
+![PCA Scatter Plot](assets/03_pca_scatter.png)
+
+*Hover over points to explore individual households and their cluster assignments.*
+
+---
 
 ## Quick Start
 
@@ -35,7 +62,9 @@ Then open http://localhost:7860 in your browser.
 
 ### Use the Live Demo
 
-Visit the [Hugging Face Spaces deployment](https://huggingface.co/spaces/Desire-in-tech/Customer-Segmentation) *(update URL after deployment)* to interact with the dashboard online — no installation required!
+Visit the [live Render deployment](https://customer-segmentation-lq9d.onrender.com) *(update URL after deployment)* to interact with the dashboard online!
+
+**Note:** The free tier may take 30-60 seconds to load after periods of inactivity. Once loaded, it runs smoothly!
 
 ## Project Structure
 
@@ -47,10 +76,15 @@ Customer-Segmentation/
 ├── data/
 │   ├── SCF_2019.csv.gz                # Survey of Consumer Finances 2019 dataset
 │   └── data_dictionary.md             # Variable descriptions and metadata
+├── assets/
+│   ├── 01_bar_chart.png               # Dashboard screenshot: variance features
+│   ├── 02_metrics.png                 # Dashboard screenshot: clustering metrics
+│   └── 03_pca_scatter.png             # Dashboard screenshot: PCA visualization
 ├── 01_exploring_data.ipynb            # EDA: distributions, correlations, summaries
 ├── 02_clustering_two_features.ipynb   # K-Means on 2 features with elbow method
 ├── 03_clustering_multiple_features.ipynb # K-Means + PCA (multi-feature analysis)
 ├── 04_interactive_dash_app.ipynb      # Notebook version of the Dash app
+├── render.yaml                        # Render.com deployment configuration
 ├── README.md
 └── requirements.txt                    # All project dependencies
 ```
@@ -119,16 +153,19 @@ The interactive Dash app (`dash_app/app.py`) includes:
 1. **Variance Analysis**
    - Toggle between trimmed (robust) and raw variance
    - View top 5 high-variance features in a bar chart
+   - Real-time updates as you switch methods
 
 2. **K-Means Clustering**
-   - Adjust number of clusters from 2 to 12
+   - Adjust number of clusters from 2 to 12 using an intuitive slider
    - Real-time inertia and silhouette score metrics
-   - Feature selection display
+   - Feature selection display showing which variables are used
+   - Instant model retraining on cluster adjustment
 
 3. **PCA Visualization**
    - 2D scatter plot of household clusters
    - Color-coded by cluster assignment
    - Reduced from 5 dimensions to 2 for interpretability
+   - Interactive hover tooltips for data exploration
 
 ## Machine Learning Concepts
 
@@ -139,32 +176,50 @@ The interactive Dash app (`dash_app/app.py`) includes:
 - **Trimmed Variance** — Robust variance estimate that removes top/bottom 10% of values to reduce outlier impact
 - **StandardScaler** — Normalize features to mean=0, std=1 before clustering
 
-## Deployment to Hugging Face Spaces
+## Deployment
 
-This project is optimized for deployment on [Hugging Face Spaces](https://huggingface.co/spaces).
+### Live on Render.com
 
-### Deploy in 5 Steps:
+This project is deployed on [Render.com](https://render.com), a modern cloud platform that supports Python web applications.
 
-1. Go to https://huggingface.co/spaces
-2. Click **"Create new Space"** → Select **Dash** as the Space type
-3. Connect your GitHub repo (`Desire-in-tech/Customer-Segmentation`)
-4. Set app file to `dash_app/app.py`
-5. Click **"Create Space"** — Hugging Face will auto-deploy within minutes
+**Live URL:** https://customer-segmentation-lq9d.onrender.com *(update after deployment)*
 
-### What Happens Automatically:
-- ✅ Install all dependencies from `dash_app/requirements.txt`
-- ✅ Clone your repository (including `data/SCF_2019.csv.gz`)
-- ✅ Run the Dash app on port 7860
-- ✅ Provide a public URL for sharing
+### How to Deploy to Render
 
-**Your live Space:** https://huggingface.co/spaces/Desire-in-tech/Customer-Segmentation *(update this URL after deployment)*
+1. Go to https://render.com and create a free account
+2. Click **"New +"** → Select **"Web Service"**
+3. Connect your GitHub repository (`Desire-in-tech/Customer-Segmentation`)
+4. Fill in the deployment details:
+   - **Name:** `customer-segmentation`
+   - **Build Command:** `pip install -r dash_app/requirements.txt`
+   - **Start Command:** `cd dash_app && python app.py`
+   - **Instance Type:** Select the Free tier
+5. Click **"Create Web Service"** and wait 3-5 minutes for deployment
+6. Your live URL will appear once the deployment is complete
 
-## Development Workflow
+### Deployment Configuration
+
+The `render.yaml` file in this repository defines all deployment settings:
+- Python 3.11 environment
+- Automatic dependency installation
+- Correct startup command for the Dash app
+- Oregon region for optimal performance
+
+### Notes on the Free Tier
+
+- **Cold start:** First request after 15 minutes of inactivity takes 30-60 seconds to load (app spins up)
+- **Always-on:** Once active, the app responds instantly
+- **Cost:** Completely free!
+- **Upgrade option:** Paid plans available if you need always-on performance
+
+---
+
+## Local Development Workflow
 
 1. **Local Development** — Iterate on notebooks and app logic
 2. **GitHub** — Push code for version control
 3. **Google Colab** — Run notebooks with GPU/TPU for faster computation
-4. **Hugging Face Spaces** — Deploy interactive web app for live demonstration
+4. **Render.com** — Auto-deploys from GitHub (changes sync automatically)
 
 ## Requirements
 
