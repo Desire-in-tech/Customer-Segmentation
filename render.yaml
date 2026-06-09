@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: customer-segmentation
+    env: python
+    region: oregon
+    buildCommand: pip install -r dash_app/requirements.txt
+    startCommand: cd dash_app && python app.py
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11
